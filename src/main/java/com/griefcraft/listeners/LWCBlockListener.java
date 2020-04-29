@@ -338,17 +338,21 @@ public class LWCBlockListener implements Listener {
         if (!LWC.ENABLED || event.isCancelled()) {
             return;
         }
-        LWC lwc = plugin.getLWC();
-        for (Block block : event.blockList()) {
+
+        LWC lwc = LWC.getInstance();
+
+        event.blockList().removeIf(block -> {
             Protection protection = plugin.getLWC().findProtection(block.getLocation());
             if (protection != null) {
                 boolean ignoreExplosions = Boolean
                         .parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "ignoreExplosions"));
+
                 if (!(ignoreExplosions || protection.hasFlag(Flag.Type.ALLOWEXPLOSIONS))) {
-                    event.setCancelled(true);
+                    return true;
                 }
             }
-        }
+            return false;
+        });
     }
 
     @EventHandler(ignoreCancelled = true)

@@ -333,17 +333,17 @@ public class LWCEntityListener implements Listener {
 
         LWC lwc = LWC.getInstance();
 
-        for (Block block : event.blockList()) {
+        event.blockList().removeIf(block -> {
             Protection protection = plugin.getLWC().findProtection(block.getLocation());
-
             if (protection != null) {
                 boolean ignoreExplosions = Boolean
                         .parseBoolean(lwc.resolveProtectionConfiguration(protection.getBlock(), "ignoreExplosions"));
 
                 if (!(ignoreExplosions || protection.hasFlag(Flag.Type.ALLOWEXPLOSIONS))) {
-                    event.setCancelled(true);
+                    return true;
                 }
             }
-        }
+            return false;
+        });
     }
 }
