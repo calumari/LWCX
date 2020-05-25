@@ -1,5 +1,6 @@
 package com.griefcraft.bukkit;
 
+import com.destroystokyo.paper.block.BlockSoundGroup;
 import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -96,6 +97,11 @@ public class EntityBlock implements Block {
     }
 
     @Override
+    public boolean breakNaturally(ItemStack itemStack, boolean b) {
+        return false;
+    }
+
+    @Override
     public Biome getBiome() {
         // TODO Auto-generated method stub
         return null;
@@ -138,6 +144,11 @@ public class EntityBlock implements Block {
     }
 
     @Override
+    public Collection<ItemStack> getDrops(ItemStack itemStack, Entity entity) {
+        return null;
+    }
+
+    @Override
     public boolean isPassable() {
         return false;
     }
@@ -149,6 +160,11 @@ public class EntityBlock implements Block {
 
     @Override
     public BoundingBox getBoundingBox() {
+        return null;
+    }
+
+    @Override
+    public BlockSoundGroup getSoundGroup() {
         return null;
     }
 
@@ -219,6 +235,11 @@ public class EntityBlock implements Block {
     @Override
     public BlockState getState() {
         return new EntityBlockState(this);
+    }
+
+    @Override
+    public BlockState getState(boolean b) {
+        return null;
     }
 
     @Override

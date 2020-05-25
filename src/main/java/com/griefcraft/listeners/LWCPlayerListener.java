@@ -38,6 +38,8 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.scripting.Module;
 import com.griefcraft.scripting.event.*;
 import com.griefcraft.util.UUIDRegistry;
+import net.socialhangover.conduit.events.HopperDrainEvent;
+import net.socialhangover.conduit.events.HopperFillEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -450,12 +452,26 @@ public class LWCPlayerListener implements Listener {
         // if the initiator is the same as the source it is a dropper i.e.
         // depositing items
         if (event.getInitiator() == event.getSource()) {
-            result = handleMoveItemEvent(event, event.getInitiator(), event.getDestination());
+            result = handleMoveItemEvent(event.getSource(), event.getDestination(), event.getInitiator(), event.getDestination());
         } else {
-            result = handleMoveItemEvent(event, event.getInitiator(), event.getSource());
+            result = handleMoveItemEvent(event.getSource(), event.getDestination(), event.getInitiator(), event.getSource());
         }
 
         if (result) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onDrain(HopperDrainEvent event) {
+        if(handleMoveItemEvent(event.getSource(), event.getHopperLocation(), event.getHopperLocation(), event.getSource())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onFill(HopperFillEvent event) {
+        if(handleMoveItemEvent(event.getHopperLocation(), event.getDestination(), event.getHopperLocation(), event.getDestination())) {
             event.setCancelled(true);
         }
     }
@@ -465,7 +481,7 @@ public class LWCPlayerListener implements Listener {
      *
      * @param inventory
      */
-    private boolean handleMoveItemEvent(InventoryMoveItemEvent event, Inventory initiator, Inventory inventory) {
+    private boolean handleMoveItemEvent(Inventory source, Inventory destination, Inventory initiator, Inventory inventory) {
         LWC lwc = LWC.getInstance();
 
         if (inventory == null) {
@@ -532,8 +548,8 @@ public class LWCPlayerListener implements Listener {
         boolean denyHoppers = Boolean.parseBoolean(
                 lwc.resolveProtectionConfiguration(blockCache.getBlockType(protection.getBlockId()), "denyHoppers"));
         boolean protectHopper = protection.hasFlag(Flag.Type.HOPPER);
-        boolean protectHopperIn = inventory == event.getDestination() && protection.hasFlag(Flag.Type.HOPPERIN);
-        boolean protectHopperOut = inventory == event.getSource() && protection.hasFlag(Flag.Type.HOPPEROUT);
+        boolean protectHopperIn = inventory == destination && protection.hasFlag(Flag.Type.HOPPERIN);
+        boolean protectHopperOut = inventory == source && protection.hasFlag(Flag.Type.HOPPEROUT);
 
         // xor = (a && !b) || (!a && b)
         if (denyHoppers ^ (protectHopper || protectHopperIn || protectHopperOut)) {
