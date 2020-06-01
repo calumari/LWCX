@@ -515,7 +515,7 @@ public class LWCPlugin extends JavaPlugin {
             pluginManager.registerEvents(new Towny(), this);
         }
         try {
-            Class.forName("net.socialhangover.conduit.events.HopperDrainEvent");
+            Class.forName("net.socialhangover.conduit.event.HopperDrainEvent");
             pluginManager.registerEvents(new ConduitPlayerListener(), this);
         } catch (ClassNotFoundException ignored) {}
     }

@@ -4,8 +4,8 @@ import com.griefcraft.cache.BlockCache;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
-import net.socialhangover.conduit.events.HopperDrainEvent;
-import net.socialhangover.conduit.events.HopperFillEvent;
+import net.socialhangover.conduit.event.HopperDrainEvent;
+import net.socialhangover.conduit.event.HopperFillEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -21,14 +21,14 @@ public class ConduitPlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onDrain(HopperDrainEvent event) {
-        if (handleMoveItemEvent(event.getSource(), event.getHopperLocation(), event.getHopperLocation(), event.getSource())) {
+        if (handleMoveItemEvent(event.getSourceInventory(), event.getHopperInventory(), event.getHopperInventory(), event.getSourceInventory())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onFill(HopperFillEvent event) {
-        if (handleMoveItemEvent(event.getHopperLocation(), event.getDestination(), event.getHopperLocation(), event.getDestination())) {
+        if (handleMoveItemEvent(event.getHopperInventory(), event.getDestinationInventory(), event.getHopperInventory(), event.getDestinationInventory())) {
             event.setCancelled(true);
         }
     }
