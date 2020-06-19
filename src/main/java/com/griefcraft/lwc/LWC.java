@@ -686,7 +686,7 @@ public class LWC {
                     if (parser.parseMessage("protection." + blockName.toLowerCase() + ".notice.protected") != null) {
                         sendLocaleToActionBar(player, "protection." + blockName.toLowerCase() + ".notice.protected", "type",
                                 protectionTypeToString, "block", blockName, "owner", owner);
-                    } else {
+                    } else if (!protection.isRealOwner(player)) {
                         sendLocaleToActionBar(player, "protection.general.notice.protected", "type", protectionTypeToString, "block",
                                 blockName, "owner", owner);
                     }
@@ -2250,7 +2250,7 @@ public class LWC {
                 if (parser.parseMessage("protection." + blockName.toLowerCase() + ".notice.protected") != null) {
                     sendLocaleToActionBar(player, "protection." + blockName.toLowerCase() + ".notice.protected", "type",
                             protectionTypeToString, "block", blockName, "owner", owner);
-                } else {
+                } else if (!protection.isRealOwner(player)) {
                     sendLocaleToActionBar(player, "protection.general.notice.protected", "type", protectionTypeToString, "block",
                             blockName, "owner", owner);
                 }
