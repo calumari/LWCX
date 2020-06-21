@@ -2,6 +2,7 @@ package com.griefcraft.listeners;
 
 import com.griefcraft.cache.BlockCache;
 import com.griefcraft.lwc.LWC;
+import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Flag;
 import com.griefcraft.model.Protection;
 import net.socialhangover.conduit.event.HopperDrainEvent;
@@ -17,23 +18,31 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-public class ConduitPlayerListener implements Listener {
+public class ConduitHopperListener implements Listener {
+
+    private final LWCPlugin plugin;
+
+    public ConduitHopperListener(LWCPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onDrain(HopperDrainEvent event) {
-        if (handleMoveItemEvent(event.getSourceInventory(), event.getHopperInventory(), event.getHopperInventory(), event.getSourceInventory())) {
+        if (!plugin.getLWC().useAlternativeHopperProtection() &&
+                handleMoveItemEvent(event.getHopperInventory(), event.getSourceInventory(), Flag.Type.HOPPEROUT)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onFill(HopperFillEvent event) {
-        if (handleMoveItemEvent(event.getHopperInventory(), event.getDestinationInventory(), event.getHopperInventory(), event.getDestinationInventory())) {
+        if (!plugin.getLWC().useAlternativeHopperProtection() &&
+                handleMoveItemEvent(event.getHopperInventory(), event.getDestinationInventory(), Flag.Type.HOPPERIN)) {
             event.setCancelled(true);
         }
     }
 
-    private boolean handleMoveItemEvent(Inventory source, Inventory destination, Inventory initiator, Inventory inventory) {
+    private boolean handleMoveItemEvent(Inventory initiator, Inventory inventory, Flag.Type flag) {
         LWC lwc = LWC.getInstance();
 
         if (inventory == null) {
@@ -99,16 +108,8 @@ public class ConduitPlayerListener implements Listener {
         BlockCache blockCache = BlockCache.getInstance();
         boolean denyHoppers = Boolean.parseBoolean(
                 lwc.resolveProtectionConfiguration(blockCache.getBlockType(protection.getBlockId()), "denyHoppers"));
-        boolean protectHopper = protection.hasFlag(Flag.Type.HOPPER);
-        boolean protectHopperIn = inventory == destination && protection.hasFlag(Flag.Type.HOPPERIN);
-        boolean protectHopperOut = inventory == source && protection.hasFlag(Flag.Type.HOPPEROUT);
 
-        // xor = (a && !b) || (!a && b)
-        if (denyHoppers ^ (protectHopper || protectHopperIn || protectHopperOut)) {
-            return true;
-        }
-
-        return false;
+        return denyHoppers ^ (protection.hasFlag(Flag.Type.HOPPER) || protection.hasFlag(flag));
     }
 
 }
