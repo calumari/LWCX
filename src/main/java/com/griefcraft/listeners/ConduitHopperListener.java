@@ -28,16 +28,22 @@ public class ConduitHopperListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onDrain(HopperDrainEvent event) {
-        if (!plugin.getLWC().useAlternativeHopperProtection() &&
-                handleMoveItemEvent(event.getHopperInventory(), event.getSourceInventory(), Flag.Type.HOPPEROUT)) {
+        if (plugin.getLWC().useAlternativeHopperProtection() &&
+                !(event.getHopperInventory().getHolder() instanceof HopperMinecart)) {
+            return;
+        }
+        if (handleMoveItemEvent(event.getHopperInventory(), event.getSourceInventory(), Flag.Type.HOPPEROUT)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onFill(HopperFillEvent event) {
-        if (!plugin.getLWC().useAlternativeHopperProtection() &&
-                handleMoveItemEvent(event.getHopperInventory(), event.getDestinationInventory(), Flag.Type.HOPPERIN)) {
+        if (plugin.getLWC().useAlternativeHopperProtection() &&
+                !(event.getHopperInventory().getHolder() instanceof HopperMinecart)) {
+            return;
+        }
+        if (handleMoveItemEvent(event.getHopperInventory(), event.getDestinationInventory(), Flag.Type.HOPPERIN)) {
             event.setCancelled(true);
         }
     }
