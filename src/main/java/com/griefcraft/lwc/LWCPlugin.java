@@ -29,7 +29,6 @@
 package com.griefcraft.lwc;
 
 import com.griefcraft.cache.BlockCache;
-import com.griefcraft.listeners.ConduitHopperListener;
 import com.griefcraft.listeners.LWC114Listener;
 import com.griefcraft.listeners.LWCBlockListener;
 import com.griefcraft.listeners.LWCEntityListener;
@@ -514,10 +513,6 @@ public class LWCPlugin extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("Towny") != null) {
             pluginManager.registerEvents(new Towny(), this);
         }
-        try {
-            Class.forName("net.socialhangover.conduit.event.HopperDrainEvent");
-            pluginManager.registerEvents(new ConduitHopperListener(this), this);
-        } catch (ClassNotFoundException ignored) {}
     }
 
     /**
