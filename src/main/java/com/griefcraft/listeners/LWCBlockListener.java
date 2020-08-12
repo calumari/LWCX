@@ -54,6 +54,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -88,6 +89,20 @@ public class LWCBlockListener implements Listener {
 
     public static final BlockFace[] POSSIBLE_FACES = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
             BlockFace.UP, BlockFace.DOWN};
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockIgnite(BlockIgniteEvent event) {
+        if(!LWC.ENABLED) {
+            return;
+        }
+
+        LWC lwc = plugin.getLWC();
+        Block block = event.getBlock();
+
+        if (lwc.findProtection(block.getLocation()) != null) {
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
