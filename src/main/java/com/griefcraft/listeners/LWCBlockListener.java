@@ -42,6 +42,7 @@ import com.griefcraft.util.Colors;
 import com.griefcraft.util.MaterialUtil;
 import com.griefcraft.util.matchers.DoubleChestMatcher;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -52,9 +53,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -91,8 +92,8 @@ public class LWCBlockListener implements Listener {
             BlockFace.UP, BlockFace.DOWN};
 
     @EventHandler(ignoreCancelled = true)
-    public void onBlockIgnite(BlockIgniteEvent event) {
-        if(!LWC.ENABLED) {
+    public void onBlockBurn(BlockBurnEvent event) {
+        if (!LWC.ENABLED) {
             return;
         }
 
@@ -101,6 +102,20 @@ public class LWCBlockListener implements Listener {
 
         if (lwc.findProtection(block.getLocation()) != null) {
             event.setCancelled(true);
+            checkAndDestroyFireNearby(block.getWorld(), block.getX(), block.getY(), block.getZ());
+        }
+    }
+
+    private void checkAndDestroyFireNearby(World world, int x, int y, int z) {
+        for (BlockFace face : POSSIBLE_FACES) {
+            checkAndDestroyFire(world, x + face.getModX(), y + face.getModY(), z + face.getModZ());
+        }
+    }
+
+    private void checkAndDestroyFire(World world, int x, int y, int z) {
+        Material type = world.getBlockAt(x, y, z).getType();
+        if (type == Material.FIRE || type == Material.SOUL_FIRE) {
+            world.getBlockAt(x, y, z).setType(Material.AIR);
         }
     }
 
